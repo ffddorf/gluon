@@ -71,6 +71,10 @@ $(eval $(call GluonModel,TLWA750,tl-wa750re-v1-squashfs,tp-link-tl-wa750re-v1))
 $(eval $(call GluonProfile,TLWA850))
 $(eval $(call GluonModel,TLWA850,tl-wa850re-v1-squashfs,tp-link-tl-wa850re-v1))
 
+# TL-WA860RE v1
+$(eval $(call GluonProfile,TLWA860))
+$(eval $(call GluonModel,TLWA860,tl-wa860re-v1-squashfs,tp-link-tl-wa860re-v1))
+
 # TL-WA901N/ND v2
 $(eval $(call GluonProfile,TLWA901))
 $(eval $(call GluonModel,TLWA901,tl-wa901nd-v2-squashfs,tp-link-tl-wa901n-nd-v2))
@@ -140,6 +144,6 @@ $(eval $(call GluonModel,WZRHPAG300H,wzr-hp-ag300h-squashfs,buffalo-wzr-hp-ag300
 # WNDR3700v2/3800
 $(eval $(call GluonProfile,WNDR3700))
 $(eval $(call GluonProfileFactorySuffix,WNDR3700,.img))
+$(eval $(call GluonModel,WNDR3700,wndr3700-squashfs,netgear-wndr3700))
 $(eval $(call GluonModel,WNDR3700,wndr3700v2-squashfs,netgear-wndr3700v2))
 $(eval $(call GluonModel,WNDR3700,wndr3800-squashfs,netgear-wndr3800))
-$(eval $(call GluonModel,WNDR3700,wndr3700-squashfs,netgear-wndr3700))
