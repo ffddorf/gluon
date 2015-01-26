@@ -66,6 +66,8 @@ wifi24
     of ``ssid`` of your client network, the ``channel`` your community is using,
     ``htmode``, the adhoc ssid ``mesh_ssid`` used between devices, the adhoc
     bssid ``mesh_bssid`` and the adhoc multicast rate ``mesh_mcast_rate``.
+    Optionally ``mesh_vlan`` can be used to setup VLAN on top of the 802.11
+    ad-hoc interface.
     Combined in an dictionary, e.g.:
     ::
 
@@ -148,6 +150,15 @@ simple_tc : package
           limit_egress = 200,
           limit_ingress = 3000,
         },
+      },
+
+setup_mode : package
+    Allows skipping setup mode (config mode) at first boot when attribute
+    ``skip`` is set to ``true``. This is optional and may be left out.
+    ::
+
+      setup_mode {
+        skip = true,
       },
 
 config_mode : package
