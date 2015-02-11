@@ -5,9 +5,8 @@ make manifest GLUON_BRANCH=experimental
 ./contrib/sign.sh ~/secret images/factory/experimental.manifest 
 
 d=`date`
-
+echo $d
 mkdir "/var/www/gluon/experimental.$d"
-cp images/* "/var/www/gluon/experimental.$d"
-
+cp -r images/. "/var/www/gluon/experimental.${d}/"
 rm experimental
-ln -s "/var/www/gluon/experimental.$d" experimental
+ln -s "/var/www/gluon/experimental.${d}" /var/www/gluon/experimental
