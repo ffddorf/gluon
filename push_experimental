@@ -8,5 +8,5 @@ d=`date`
 echo $d
 mkdir "/var/www/gluon/experimental.$d"
 cp -r images/. "/var/www/gluon/experimental.${d}/"
-rm experimental
+rm -rf /var/www/gluon/experimental
 ln -s "/var/www/gluon/experimental.${d}" /var/www/gluon/experimental
