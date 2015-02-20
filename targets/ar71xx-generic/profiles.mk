@@ -130,6 +130,7 @@ $(eval $(call GluonModel,UBNT,ubnt-unifi-outdoor-squashfs,ubiquiti-unifiap-outdo
 ifeq ($(BROKEN),1)
 $(eval $(call GluonModel,UBNT,ubnt-ls-sr71-squashfs,ubiquiti-ls-sr71)) # BROKEN: Untested
 $(eval $(call GluonModel,UBNT,ubnt-uap-pro-squashfs,ubiquiti-unifi-ap-pro)) # BROKEN: not properly tested; probably issues with WLAN adapter detection
+$(eval $(call GluonModel,UBNT,ubnt-unifi-outdoor-plus-squashfs,ubiquiti-unifiap-outdoor+)) # BROKEN: WLAN doesn't work correctly (high packet loss)
 endif
 
 
@@ -168,3 +169,10 @@ $(eval $(call GluonProfileFactorySuffix,WNDR3700,.img))
 $(eval $(call GluonModel,WNDR3700,wndr3700-squashfs,netgear-wndr3700))
 $(eval $(call GluonModel,WNDR3700,wndr3700v2-squashfs,netgear-wndr3700v2))
 $(eval $(call GluonModel,WNDR3700,wndr3800-squashfs,netgear-wndr3800))
+
+## Allnet
+
+# ALL0315N
+$(eval $(call GluonProfile,ALL0315N,uboot-envtools rssileds))
+$(eval $(call GluonProfileFactorySuffix,ALL0315N,))
+$(eval $(call GluonModel,ALL0315N,all0315n-squashfs,allnet-all0315n))
