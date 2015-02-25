@@ -1,5 +1,5 @@
 ae:
-==Wie baut man "meine" Version:==
+Wie baut man "meine" Version:
 
 
 
@@ -15,7 +15,7 @@ dann site/site.mk die versionskennung anpassen ...  z.B 0.7.xx.01
 
 und dann warten
 
-==und wie mache ich es:==
+und wie mache ich es:
 
     git clone git@github.com:aeickho/gluon.git
 
@@ -25,7 +25,9 @@ und dann warten
     git submodule update
 
     cd site
-#dann site.mk die versionskennung anpassen ...  z.B 0.7.xx.01
+    
+dann site.mk die versionskennung anpassen ...  z.B 0.7.xx.01
+
     git commit -a site.mk
     git push
 
@@ -38,6 +40,7 @@ und dann warten
     make BROKEN=1  <- damit es auch den WNDRMAC baut
 
 
+----------------------------------------------
 
 
 Documentation (incomplete at this time, contribute if you can!) may be found at
