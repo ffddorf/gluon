@@ -1,3 +1,47 @@
+ae:
+==Wie baut man "meine" Version:==
+
+
+
+git clone git@github.com:aeickho/gluon.git
+
+cd gluon
+
+git submodule init
+git submodule update
+
+dann site/site.mk die versionskennung anpassen ...  z.B 0.7.xx.01
+
+make update
+make BROKEN=1  <- damit es auch den WNDRMAC baut
+
+und dann warten
+
+==und wie mache ich es:==
+
+git clone git@github.com:aeickho/gluon.git
+
+cd gluon
+
+git submodule init
+git submodule update
+
+cd site
+dann site.mk die versionskennung anpassen ...  z.B 0.7.xx.01
+git commit -a site.mk
+git push
+
+cd ..
+git commit -a   # damit die neue commit id des submodules aktualiesiert wird
+git push
+
+
+make update
+make BROKEN=1  <- damit es auch den WNDRMAC baut
+
+
+
+
 Documentation (incomplete at this time, contribute if you can!) may be found at
 http://gluon.readthedocs.org/
 
