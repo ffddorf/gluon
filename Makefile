@@ -20,10 +20,6 @@ TOPDIR:=$(GLUON_ORIGOPENWRTDIR)
 export TOPDIR
 
 
-GLUON_TARGET ?= ar71xx-generic
-export GLUON_TARGET
-
-
 update: FORCE
 	$(GLUONDIR)/scripts/update.sh
 	$(GLUONDIR)/scripts/patch.sh
@@ -52,22 +48,12 @@ export OPENWRT_BUILD GLUON_TOOLS GREP_OPTIONS
 -include $(TOPDIR)/include/depends.mk
 include $(GLUONDIR)/include/toplevel.mk
 
-define GluonProfile
-image/$(1): FORCE
-	+@$$(GLUONMAKE) $$@
-endef
-
-define GluonProfileFactorySuffix
-endef
-
-define GluonProfileSysupgradeSuffix
-endef
-
-define GluonModel
-endef
 
 include $(GLUONDIR)/targets/targets.mk
-include $(GLUONDIR)/targets/$(GLUON_TARGET)/profiles.mk
+
+
+CheckTarget := [ -n '$(GLUON_TARGET)' -a -n '$(GLUON_TARGET_$(GLUON_TARGET)_BOARD)' -a -n '$(GLUON_TARGET_$(GLUON_TARGET)_SUBTARGET)' ] \
+	|| (echo -e 'Please set GLUON_TARGET to a valid target. Gluon supports the following targets:$(subst $(space),\n * ,$(GLUON_TARGETS))'; false)
 
 
 CheckExternal := test -d $(GLUON_ORIGOPENWRTDIR) || (echo 'You don'"'"'t seem to have obtained the external repositories needed by Gluon; please call `make update` first!'; false)
@@ -75,6 +61,7 @@ CheckExternal := test -d $(GLUON_ORIGOPENWRTDIR) || (echo 'You don'"'"'t seem to
 
 prepare-target: FORCE
 	@$(CheckExternal)
+	@$(CheckTarget)
 	+@$(GLUONMAKE_EARLY) prepare-target
 
 
@@ -85,13 +72,15 @@ all: prepare-target
 prepare: prepare-target
 	+@$(GLUONMAKE) $@
 
-clean dirclean download images: FORCE
+clean download images: FORCE
 	@$(CheckExternal)
+	@$(CheckTarget)
 	+@$(GLUONMAKE_EARLY) maybe-prepare-target
 	+@$(GLUONMAKE) $@
 
-toolchain/% package/% target/%: FORCE
+toolchain/% package/% target/% image/%: FORCE
 	@$(CheckExternal)
+	@$(CheckTarget)
 	+@$(GLUONMAKE_EARLY) maybe-prepare-target
 	+@$(GLUONMAKE) $@
 
@@ -99,8 +88,25 @@ manifest: FORCE
 	[ -n '$(GLUON_BRANCH)' ] || (echo 'Please set GLUON_BRANCH to create a manifest.'; false)
 	echo '$(GLUON_PRIORITY)' | grep -qE '^([0-9]*\.)?[0-9]+$$' || (echo 'Please specify a numeric value for GLUON_PRIORITY to create a manifest.'; false)
 	@$(CheckExternal)
-	+@$(GLUONMAKE_EARLY) maybe-prepare-target
-	+@$(GLUONMAKE) $@
+
+	@mkdir -p $(GLUON_IMAGEDIR)/sysupgrade
+
+	@( \
+		echo 'BRANCH=$(GLUON_BRANCH)' && \
+		echo 'DATE=$(shell $(GLUON_ORIGOPENWRTDIR)/staging_dir/host/bin/lua $(GLUONDIR)/scripts/rfc3339date.lua)' && \
+		echo 'PRIORITY=$(GLUON_PRIORITY)' && \
+		echo \
+	) > $(GLUON_IMAGEDIR)/sysupgrade/$(GLUON_BRANCH).manifest
+
+	+($(foreach GLUON_TARGET,$(GLUON_TARGETS), \
+		( [ ! -e $(BOARD_BUILDDIR)/prepared ] || ( $(GLUONMAKE) manifest GLUON_TARGET='$(GLUON_TARGET)' ) ) && \
+	) :)
+
+dirclean : FORCE
+	@for dir in build_dir dl staging_dir tmp; do \
+		rm -rf $(GLUON_ORIGOPENWRTDIR)/$$dir; \
+	done
+	@rm -rf $(GLUON_BUILDDIR) $(GLUON_IMAGEDIR)
 
 else
 
@@ -236,12 +242,6 @@ clean: FORCE
 	+$(SUBMAKE) clean
 	rm -f $(gluon_prepared_stamp)
 
-dirclean: FORCE
-	for dir in build_dir dl staging_dir tmp; do \
-		rm -rf $(GLUON_ORIGOPENWRTDIR)/$$dir; \
-	done
-	rm -rf $(GLUON_BUILDDIR)
-
 
 export MD5SUM := $(GLUONDIR)/scripts/md5sum.sh
 export SHA512SUM := $(GLUONDIR)/scripts/sha512sum.sh
@@ -300,7 +300,8 @@ BIN_DIR = $(PROFILE_BUILDDIR)/images
 TMP_DIR = $(PROFILE_BUILDDIR)/tmp
 TARGET_DIR = $(PROFILE_BUILDDIR)/root
 
-IMAGE_PREFIX = gluon-$(GLUON_SITE_CODE)-$$(cat $(gluon_prepared_stamp))
+PREPARED_RELEASE = $$(cat $(gluon_prepared_stamp))
+IMAGE_PREFIX = gluon-$(GLUON_SITE_CODE)-$(PREPARED_RELEASE)
 
 OPKG:= \
   IPKG_TMP="$(TMP_DIR)/ipkgtmp" \
@@ -384,26 +385,17 @@ call_image/%: FORCE
 images: $(patsubst %,call_image/%,$(PROFILES)) ;
 
 manifest: FORCE
-	mkdir -p $(GLUON_IMAGEDIR)/sysupgrade
-	(cd $(GLUON_IMAGEDIR)/sysupgrade && \
-		echo 'BRANCH=$(GLUON_BRANCH)' && \
-		echo 'DATE=$(shell $(STAGING_DIR_HOST)/bin/lua $(GLUONDIR)/scripts/rfc3339date.lua)' && \
-		echo 'PRIORITY=$(GLUON_PRIORITY)' && \
-		echo && \
-		($(foreach profile,$(PROFILES), \
+	( \
+		cd $(GLUON_IMAGEDIR)/sysupgrade; \
+		$(foreach profile,$(PROFILES), \
 			$(foreach model,$(GLUON_$(profile)_MODELS), \
-				for file in gluon-*-'$(model)-sysupgrade$(GLUON_$(profile)_SYSUPGRADE_EXT)'; do \
-					[ -e "$$file" ] && echo \
-						'$(model)' \
-						"$$(echo "$$file" | sed -n -r -e 's/^gluon-$(call regex-escape,$(GLUON_SITE_CODE))-(.*)-$(call regex-escape,$(model)-sysupgrade$(GLUON_$(profile)_SYSUPGRADE_EXT))$$/\1/p')" \
-						"$$($(SHA512SUM) "$$file")" \
-						"$$file" && break; \
-				done; \
+				file="$(IMAGE_PREFIX)-$(model)-sysupgrade$(GLUON_$(profile)_SYSUPGRADE_EXT)"; \
+				[ -e "$$file" ] && echo '$(model)' "$(PREPARED_RELEASE)" "$$($(SHA512SUM) "$$file")" "$$file"; \
 			) \
-		) :) \
-	) > $(GLUON_IMAGEDIR)/sysupgrade/$(GLUON_BRANCH).manifest
+		) : \
+	) >> $(GLUON_IMAGEDIR)/sysupgrade/$(GLUON_BRANCH).manifest
 
 
-.PHONY: all images prepare clean gluon-tools
+.PHONY: all images prepare clean gluon-tools manifest
 
 endif
