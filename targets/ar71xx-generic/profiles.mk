@@ -182,10 +182,12 @@ $(eval $(call GluonProfileFactorySuffix,WNDR3700,-squashfs-factory,.img))
 $(eval $(call GluonModel,WNDR3700,wndr3700,netgear-wndr3700))
 $(eval $(call GluonModel,WNDR3700,wndr3700v2,netgear-wndr3700v2))
 $(eval $(call GluonModel,WNDR3700,wndr3800,netgear-wndr3800))
+
 ifeq ($(BROKEN),1)
 $(eval $(call GluonModel,WNDR3700,wndrmac,netgear-wndrmac)) # BROKEN: untested
-$(eval $(call GluonModel,WNDR3700,wndrmacv2,netgear-wndrmacv2)) # BROKEN: untested
 endif
+
+$(eval $(call GluonModel,WNDR3700,wndrmacv2,netgear-wndrmacv2))
 
 ## Allnet
 
