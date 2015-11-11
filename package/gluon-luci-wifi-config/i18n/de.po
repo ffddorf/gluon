@@ -25,6 +25,9 @@ msgstr "Client-Netz aktivieren"
 msgid "Enable mesh network"
 msgstr "Mesh-Netz aktivieren"
 
+msgid "Enable STA mesh network"
+msgstr "Mesh-Netz über STA aktivieren"
+
 msgid "Transmission power"
 msgstr "Sendeleistung"
 

@@ -86,7 +86,7 @@ for _, radio in ipairs(radios) do
     o.rmempty = false
 
     --box for the STA mesh network
-    if config.stamesh_ssid then
+    if uci:get('wireless', 'stamesh_' .. radio) then
       o = p:option(Flag, radio .. '_stamesh_enabled', translate("Enable STA mesh network"))
       o.default = uci:get_bool('wireless', 'stamesh_' .. radio, "disabled") and o.disabled or o.enabled
       o.rmempty = false
@@ -139,10 +139,12 @@ function f.handle(self, state, data)
       end
       uci:set('wireless', 'mesh_' .. radio, "disabled", meshdisabled)
 
-      if data[radio .. '_stamesh_enabled'] == '0' then
-        uci:set('wireless', 'stamesh_' .. radio, "disabled", 1)
-      elseif data[radio .. '_stamesh_enabled'] == '1' then
-        uci:set('wireless', 'stamesh_' .. radio, "disabled", 0)
+      if uci:get('wireless', 'stamesh_' .. radio) then
+        local stameshdisabled = 0
+        if data[radio .. '_stamesh_enabled'] == '0' then
+          stameshdisabled = 1
+        end
+        uci:set('wireless', 'stamesh_' .. radio, "disabled", stameshdisabled)
       end
 
       if data[radio .. '_txpower'] then

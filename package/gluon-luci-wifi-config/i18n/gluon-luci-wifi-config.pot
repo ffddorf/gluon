@@ -16,6 +16,9 @@ msgstr ""
 msgid "Enable mesh network"
 msgstr ""
 
+msgid "Enable STA mesh network"
+msgstr ""
+
 msgid "Transmission power"
 msgstr ""
 

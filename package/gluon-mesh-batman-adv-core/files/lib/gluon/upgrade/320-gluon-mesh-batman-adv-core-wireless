@@ -105,7 +105,7 @@ local function configure_radio(radio, index, config)
 		ssid = config.mesh_ssid,
 		bssid = config.mesh_bssid,
 		encryption = mesh_enc,
-		key = mesh_key,
+		key = mesh_psk,
 		macaddr = util.generate_mac(3, index),
 		mcast_rate = config.mesh_mcast_rate,
 		ifname = mesh_ifname,
