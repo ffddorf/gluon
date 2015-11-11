@@ -1,0 +1,14 @@
+From: Heiko Wundram <modelnine@modelnine.org>
+Date: Mon, Oct 26 2015 14:48:26 +0100
+Subject: Enable IBSS-RSN for mini-supplicant.
+
+diff --git a/package/network/services/hostapd/files/wpa_supplicant-mini.config b/package/network/services/hostapd/files/wpa_supplicant-mini.config
+index a33e6f0..a006cd1 100644
+--- a/package/network/services/hostapd/files/wpa_supplicant-mini.config
++++ b/package/network/services/hostapd/files/wpa_supplicant-mini.config
+@@ -405,3 +405,5 @@ CONFIG_TLS=internal
+ 
+ CONFIG_NO_RANDOM_POOL=y
+ NEED_80211_COMMON=y
++
++CONFIG_IBSS_RSN=y
