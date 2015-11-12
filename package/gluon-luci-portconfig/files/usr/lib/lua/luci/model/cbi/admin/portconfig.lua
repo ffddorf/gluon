@@ -27,6 +27,12 @@ local o
 
 s = f:section(SimpleSection, nil, nil)
 
+if sysconfig.lan_ifname then
+  o = s:option(Flag, "reverse_wan_lan", translate("Reverse WAN/LAN interfaces"))
+  o.default = sysconfig.reverse_wan_lan == '1' and o.enabled or o.disabled
+  o.rmempty = false
+end
+
 o = s:option(ListValue, "ipv4", translate("IPv4"))
 o:value("dhcp", translate("Automatic (DHCP)"))
 o:value("static", translate("Static"))
@@ -119,6 +125,21 @@ function f.handle(self, state, data)
     uci:set("network", "mesh_wan", "auto", data.mesh_wan)
 
     if sysconfig.lan_ifname then
+      if not sysconfig.reverse_wan_lan then
+        sysconfig.reverse_wan_lan = '0'
+      end
+      if data.reverse_wan_lan ~= sysconfig.reverse_wan_lan then
+        local wan_ifname = sysconfig.lan_ifname
+        local lan_ifname = sysconfig.wan_ifname
+
+        sysconfig.reverse_wan_lan = data.reverse_wan_lan
+        sysconfig.wan_ifname = wan_ifname
+        sysconfig.lan_ifname = lan_ifname
+
+        uci:set("network", "wan", "ifname", wan_ifname)
+        uci:set("network", "mesh_lan", "ifname", lan_ifname)
+      end
+
       uci:set("network", "mesh_lan", "auto", data.mesh_lan)
 
       if data.mesh_lan == '1' then

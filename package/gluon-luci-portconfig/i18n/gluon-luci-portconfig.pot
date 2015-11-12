@@ -1,6 +1,9 @@
 msgid ""
 msgstr "Content-Type: text/plain; charset=UTF-8"
 
+msgid "Reverse WAN/LAN interfaces"
+msgstr ""
+
 msgid "Automatic (DHCP)"
 msgstr ""
 
