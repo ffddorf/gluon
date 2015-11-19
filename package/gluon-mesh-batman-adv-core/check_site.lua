@@ -14,7 +14,7 @@ for _, config in ipairs({'wifi24', 'wifi5'}) do
       need_string(config .. '.mesh_psk')
    end
 
-   need_boolean(config .. '.stamesh_disabled', false)
+   need_boolean(config .. '.stamesh_enabled', false)
    if need_string(config .. '.stamesh_ssid', false) then
       if not need_string(config .. '.stamesh_enc', false) then
          need_string(config .. '.mesh_enc')
