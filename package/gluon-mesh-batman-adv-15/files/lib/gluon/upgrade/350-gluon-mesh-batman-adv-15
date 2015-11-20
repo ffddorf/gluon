@@ -9,10 +9,10 @@ local function configure_mtu(radio, config)
   local mesh = 'mesh_' .. radio
 
   if config.mesh_vlan then
-    uci:set('network', mesh, 'mtu', 1536)
-    uci:set('network', mesh .. '_vlan', 'mtu', 1532)
+    uci:set('network', mesh, 'mtu', 1540)
+    uci:set('network', mesh .. '_vlan', 'mtu', 1536)
   else
-    uci:set('network', mesh, 'mtu', 1532)
+    uci:set('network', mesh, 'mtu', 1536)
   end
 end
 

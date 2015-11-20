@@ -1,0 +1,1 @@
+rule('BROUTING -i bat0 -p 802_1Q -j DROP', 'broute')
