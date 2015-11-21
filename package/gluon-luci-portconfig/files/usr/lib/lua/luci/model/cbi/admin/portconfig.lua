@@ -14,10 +14,18 @@ $Id$
 
 local uci = luci.model.uci.cursor()
 local sysconfig = require 'gluon.sysconfig'
+local site = require 'gluon.site_config'
 
 local wan = uci:get_all("network", "wan")
 local wan6 = uci:get_all("network", "wan6")
 local dns = uci:get_first("gluon-wan-dnsmasq", "static")
+local batname
+
+if site.site_vlan then
+  batname = 'bat0.' .. site.site_vlan
+else
+  batname = 'bat0'
+end
 
 local f = SimpleForm("portconfig", translate("WAN connection"))
 f.template = "admin/expertmode"
@@ -143,9 +151,9 @@ function f.handle(self, state, data)
       uci:set("network", "mesh_lan", "auto", data.mesh_lan)
 
       if data.mesh_lan == '1' then
-        uci:set("network", "client", "ifname", "bat0")
+        uci:set("network", "client", "ifname", batname)
       else
-        uci:set("network", "client", "ifname", sysconfig.lan_ifname .. " bat0")
+        uci:set("network", "client", "ifname", sysconfig.lan_ifname .. " " .. batname)
       end
     end
 

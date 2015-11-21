@@ -21,12 +21,19 @@ uci:commit('batman-adv')
 
 
 if not uci:get('network', 'client') then
+  local batname
   local ifname
 
-  if sysconfig.lan_ifname and not site.mesh_on_lan then
-    ifname = sysconfig.lan_ifname .. ' bat0'
+  if site.site_vlan then
+    batname = 'bat0.' .. site.site_vlan
   else
-    ifname = 'bat0'
+    batname = 'bat0'
+  end
+
+  if sysconfig.lan_ifname and not site.mesh_on_lan then
+    ifname = sysconfig.lan_ifname .. ' ' .. batname
+  else
+    ifname = batname
   end
 
   uci:section('network', 'interface', 'client',
@@ -51,6 +58,17 @@ uci:section('network', 'interface', 'bat0',
 		    macaddr = sysconfig.primary_mac,
 	    }
 )
+
+uci:delete('network', 'bat0_vlan')
+if site.site_vlan then
+  uci:section('network', 'interface', 'bat0_vlan',
+	      {
+		      ifname = '@bat0.' .. site.site_vlan,
+		      proto = 'batadv_vlan',
+		      ap_isolation = 0,
+	      }
+  )
+end
 
 uci:save('network')
 uci:commit('network')

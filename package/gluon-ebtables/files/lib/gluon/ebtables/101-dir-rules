@@ -1,2 +1,11 @@
-rule 'IN_ONLY --logical-in br-client -i ! bat0 -j DROP'
-rule 'OUT_ONLY --logical-out br-client -o ! bat0 -j DROP'
+local site = require 'gluon.site_config'
+local batname
+
+if site.site_vlan then
+  batname = 'bat0.' .. site.site_vlan
+else
+  batname = 'bat0'
+end
+
+rule('IN_ONLY --logical-in br-client -i ! ' .. batname .. ' -j DROP')
+rule('OUT_ONLY --logical-out br-client -o ! ' .. batname .. ' -j DROP')
