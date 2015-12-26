@@ -1,0 +1,18 @@
+From: Heiko Wundram <heiko.wundram@freifunk-celle.de>
+Date: Sat, Dec 26 21:51:36 CET 2015 +0100
+Subject: Properly evaluate htmode in wpa_supplicant config.
+
+diff --git a/package/network/services/hostapd/files/netifd.sh b/package/network/services/hostapd/files/netifd.sh
+index 30d12e9..7a4e82b 100644
+--- a/package/network/services/hostapd/files/netifd.sh
++++ b/package/network/services/hostapd/files/netifd.sh
+@@ -573,8 +573,7 @@ wpa_supplicant_add_network() {
+ 		append network_data "mcast_rate=$mc_rate" "$N$T"
+ 	}
+ 
+-	local ht_str
+-	[ -n "$ht" ] && append network_data "htmode=$ht" "$N$T"
++	[ -n "$htmode" ] && append network_data "htmode=$htmode" "$N$T"
+ 
+ 	cat >> "$_config" <<EOF
+ network={
