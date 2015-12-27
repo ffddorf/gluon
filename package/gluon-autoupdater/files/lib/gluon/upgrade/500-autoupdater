@@ -5,7 +5,7 @@ local uci = require 'luci.model.uci'
 
 local c = uci.cursor()
 
-
+local foundbranch = false
 for name, config in pairs(site.autoupdater.branches) do
 	c:delete('autoupdater', name)
 	c:section('autoupdater', 'branch', name,
@@ -16,11 +16,18 @@ for name, config in pairs(site.autoupdater.branches) do
 			  pubkey = config.pubkeys,
 		  }
 	)
+
+	foundbranch = foundbranch or c:get('autoupdater', 'settings', 'branch') == name
 end
 
-if not c:get('autoupdater', 'settings') then
-	local enabled = 0
-	local branch = site.autoupdater.branch
+if not foundbranch and c:get('autoupdater', 'settings') then
+	c:delete('autoupdater', c:get('autoupdater', 'settings', 'branch'))
+	c:delete('autoupdater', 'settings')
+end
+
+if c:get('autoupdater', 'settings', 'branch') ~= site.autoupdater.branch then
+	local enabled = c:get('autoupdater', 'settings', 'enabled') or 0
+	local branch = c:get('autoupdater', 'settings', 'branch') or site.autoupdater.branch
 
 	local f = io.open('/lib/gluon/autoupdater/default_branch')
 	if f then
@@ -29,6 +36,7 @@ if not c:get('autoupdater', 'settings') then
 		f:close()
 	end
 
+	c:delete('autoupdater', 'settings')
 	c:section('autoupdater', 'autoupdater', 'settings',
 		  {
 			  enabled = enabled,
