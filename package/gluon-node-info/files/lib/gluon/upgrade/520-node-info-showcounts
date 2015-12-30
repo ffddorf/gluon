@@ -1,0 +1,13 @@
+#!/usr/bin/lua
+
+local site = require 'gluon.site_config'
+local uci = require('luci.model.uci').cursor()
+
+local config = 'gluon-node-info'
+local show_counts = uci:get(config, uci:get_first(config, 'system'), 'show_counts')
+
+if not show_counts then
+  uci:set(config, uci:get_first(config, 'system'), 'show_counts', '1')
+  uci:save(config)
+  uci:commit(config)
+end

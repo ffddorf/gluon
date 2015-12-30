@@ -1,3 +1,11 @@
+local uci = require('luci.model.uci').cursor()
+
+if uci:get_first("gluon-node-info", "system", "show_counts") ~= "1" then
+  return { total = -1
+         , wifi = -1
+         }
+end
+
 local list = io.lines("/sys/kernel/debug/batman_adv/bat0/transtable_local")
 
 local count = 0
