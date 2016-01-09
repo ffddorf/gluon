@@ -80,6 +80,20 @@ for _, radio in ipairs(radios) do
     o.default = uci:get_bool('wireless', 'client_' .. radio, "disabled") and o.disabled or o.enabled
     o.rmempty = false
 
+    --box for additional client network only if enabled
+    if uci:get('wireless', 'adclient_' .. radio) then
+      o = p:option(Flag, radio .. '_adclient_enabled', translate("Enable additional client network"))
+      o.default = uci:get_bool('wireless', 'adclient_' .. radio, "disabled") and o.disabled or o.enabled
+      o.rmempty = false
+
+      o = p:option(Value, radio .. '_adclient_ssid', translate("SSID of additional client network"))
+      o.default = uci:get('wireless', 'adclient_' .. radio, 'ssid')
+      o:depends(radio .. '_adclient_enabled', "1")
+      o.rmempty = false
+      o.datatype = "string"
+      o.description = translate("e.g. freifunk.net")
+    end
+
     --box for the mesh network
     o = p:option(Flag, radio .. '_mesh_enabled', translate("Enable mesh network"))
     o.default = uci:get_bool('wireless', 'mesh_' .. radio, "disabled") and o.disabled or o.enabled
@@ -132,6 +146,15 @@ function f.handle(self, state, data)
         clientdisabled = 1
       end
       uci:set('wireless', 'client_' .. radio, "disabled", clientdisabled)
+
+      if uci:get('wireless', 'adclient_' .. radio) then
+        local adclientdisabled = 0
+        if data[radio .. '_adclient_enabled'] == '0' then
+          adclientdisabled = 1
+        end
+        uci:set('wireless', 'adclient_' .. radio, "ssid", data[radio .. '_adclient_ssid'])
+        uci:set('wireless', 'adclient_' .. radio, "disabled", adclientdisabled)
+      end
 
       local meshdisabled = 0
       if data[radio .. '_mesh_enabled'] == '0' then

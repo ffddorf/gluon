@@ -22,6 +22,15 @@ msgstr "5GHz-WLAN"
 msgid "Enable client network"
 msgstr "Client-Netz aktivieren"
 
+msgid "Enable additional client network"
+msgstr "Zusätzliches Client-Netz aktivieren"
+
+msgid "SSID of additional client network"
+msgstr "SSID des zusätzlichen Client-Netzes"
+
+msgid "e.g. freifunk.net"
+msgstr "z.B. freifunk.net"
+
 msgid "Enable mesh network"
 msgstr "Mesh-Netz aktivieren"
 

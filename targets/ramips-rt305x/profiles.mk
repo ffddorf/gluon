@@ -1,6 +1,5 @@
 # List of hardware profiles
 
-# VoCore
-$(eval $(call GluonProfile,VOCORE))
-$(eval $(call GluonProfileFactorySuffix,VOCORE))
-$(eval $(call GluonModel,VOCORE,vocore,vocore))
+# D-Link DIR-615 D
+$(eval $(call GluonProfile,DIR-615-D))
+$(eval $(call GluonModel,DIR-615-D,dir-615-d,dlink-dir-615-d))

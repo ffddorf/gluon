@@ -15,6 +15,7 @@ $Id$
 ]]--
 
 local fs = require "nixio.fs"
+local uci = luci.model.uci.cursor()
 
 local m = Map("system", translate("SSH keys"))
 m.pageaction = false
@@ -100,6 +101,40 @@ function m2.on_commit(map)
   end
 end
 
-local c = Compound(m, m2)
+local m3 = Map("system", translate("External access"))
+m3.pageaction = false
+m3.template = "admin/expertmode"
+
+local s = m3:section(TypedSection, "_dummy3", nil, translate(
+                     "Allow external access to your node via its public IPv6 address and/or from ICVPN. Be aware that this means that "
+                     .. "your node can then be managed and have its status page retrieved from clients in remote networks. As this also "
+                     .. "means that your router is accessible through it's public IPv6 address from everyone on the Internet, it should "
+                     .. "have either public-key authentication enabled or a very strong password set up. Only enable this if you know "
+                     .. "what you are doing!"))
+
+s.addremove = false
+s.anonymous = true
+
+function s.cfgsections()
+  return { "_extaccess" }
+end
+
+local rem = s:option(Flag, "allow_remote", translate("Allow remote access to node"))
+rem.rmempty = false
+
+function rem.cfgvalue()
+  return uci:get_first("gluon-node-info", "system", "allow_remote", rem.enabled)
+end
+
+function rem.write(self, section, value)
+  if value then
+    local sname = uci:get_first("gluon-node-info", "system")
+    uci:set("gluon-node-info", sname, "allow_remote", value)
+    uci:save("gluon-node-info")
+    uci:commit("gluon-node-info")
+  end
+end
+
+local c = Compound(m, m2, m3)
 c.pageaction = false
 return c

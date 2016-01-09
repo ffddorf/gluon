@@ -22,6 +22,17 @@ local function configure_radio(radio, index, config)
     disable_state_client = true
   end
 
+  local adclient = 'adclient_' .. radio
+  local adclient_ssid = 'freifunk.net'
+  local disable_state_adclient = true
+
+  if not config.adclient_disabled then
+    if uci:get('wireless', adclient) then
+      adclient_ssid = uci:get('wireless', adclient, "ssid")
+      disable_state_adclient = uci:get_bool('wireless', adclient, "disabled")
+    end
+  end
+
   local mesh = 'mesh_' .. radio
   local disable_state_mesh = false
   local mesh_enc = config.mesh_enc
@@ -49,11 +60,13 @@ local function configure_radio(radio, index, config)
   end
 
   local client_ifname
+  local adclient_ifname
   local mesh_ifname
   local stamesh_ifname
   local radio_suffix = radio:match('^radio(%d+)$')
   if radio_suffix then
     client_ifname = 'client' .. radio_suffix
+    adclient_ifname = 'adclient' .. radio_suffix
     mesh_ifname = 'mesh' .. radio_suffix
     stamesh_ifname = 'stamesh' .. radio_suffix
   end
@@ -70,6 +83,21 @@ local function configure_radio(radio, index, config)
 		disabled = disable_state_client and 1 or 0,
 	      }
   )
+
+  uci:delete('wireless', adclient)
+  if not config.adclient_disabled then
+    uci:section('wireless', 'wifi-iface', adclient,
+		{
+		  device = radio,
+		  network = 'client',
+		  mode = 'ap',
+		  ssid = adclient_ssid,
+		  macaddr = util.generate_mac(3, index),
+		  ifname = adclient_ifname,
+		  disabled = disable_state_adclient and 1 or 0,
+		}
+    )
+  end
 
   uci:delete('network', mesh)
   uci:delete('network', mesh .. '_vlan')
@@ -104,7 +132,7 @@ local function configure_radio(radio, index, config)
 		mode = 'adhoc',
 		ssid = config.mesh_ssid,
 		bssid = config.mesh_bssid,
-		macaddr = util.generate_mac(3, index),
+		macaddr = util.generate_mac(4, index),
 		mcast_rate = config.mesh_mcast_rate,
 		ifname = mesh_ifname,
 		disabled = disable_state_mesh and 1 or 0,
@@ -149,7 +177,7 @@ local function configure_radio(radio, index, config)
 			network = stamesh,
 			mode = 'sta',
 			ssid = config.stamesh_ssid,
-			macaddr = util.generate_mac(4, index),
+			macaddr = util.generate_mac(5, index),
 			mcast_rate = config.mesh_mcast_rate,
 			ifname = stamesh_ifname,
 			disabled = disable_state_stamesh and 1 or 0,

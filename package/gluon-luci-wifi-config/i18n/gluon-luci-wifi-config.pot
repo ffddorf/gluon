@@ -13,6 +13,15 @@ msgstr ""
 msgid "Enable client network"
 msgstr ""
 
+msgid "Enable additional client network"
+msgstr ""
+
+msgid "SSID of additional client network"
+msgstr ""
+
+msgid "e.g. freifunk.net"
+msgstr ""
+
 msgid "Enable mesh network"
 msgstr ""
 

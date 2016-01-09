@@ -1,0 +1,13 @@
+#!/usr/bin/lua
+
+local site = require 'gluon.site_config'
+local uci = require('luci.model.uci').cursor()
+
+local config = 'gluon-node-info'
+local show_counts = uci:get(config, uci:get_first(config, 'system'), 'allow_remote')
+
+if not allow_remote then
+  uci:set(config, uci:get_first(config, 'system'), 'allow_remote', '0')
+  uci:save(config)
+  uci:commit(config)
+end

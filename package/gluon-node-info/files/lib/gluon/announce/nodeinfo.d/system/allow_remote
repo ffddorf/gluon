@@ -1,0 +1,1 @@
+return uci:get_first('gluon-node-info', 'system', 'allow_remote')
