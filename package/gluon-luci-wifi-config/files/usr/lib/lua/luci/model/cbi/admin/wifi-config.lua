@@ -148,12 +148,12 @@ function f.handle(self, state, data)
       uci:set('wireless', 'client_' .. radio, "disabled", clientdisabled)
 
       if uci:get('wireless', 'adclient_' .. radio) then
-        local adclientdisabled = 0
         if data[radio .. '_adclient_enabled'] == '0' then
-          adclientdisabled = 1
+          uci:set('wireless', 'adclient_' .. radio, "disabled", 1)
         end
-        uci:set('wireless', 'adclient_' .. radio, "ssid", data[radio .. '_adclient_ssid'])
-        uci:set('wireless', 'adclient_' .. radio, "disabled", adclientdisabled)
+          uci:set('wireless', 'adclient_' .. radio, "disabled", 0)
+          uci:set('wireless', 'adclient_' .. radio, "ssid", data[radio .. '_adclient_ssid'])
+        end
       end
 
       local meshdisabled = 0
