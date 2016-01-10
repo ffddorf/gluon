@@ -53,6 +53,8 @@ local s = f:section(SimpleSection, nil, translate(
 ))
 
 local radios = {}
+local macfilter = 'disable'
+local maclist = ''
 
 -- look for wifi interfaces and add them to the array
 uci:foreach('wireless', 'wifi-device',
@@ -131,9 +133,30 @@ for _, radio in ipairs(radios) do
         end
       end
     end
+
+    macfilter = uci:get('wireless', 'client_' .. radio, "macfilter")
+    maclist = uci:get('wireless', 'client_' .. radio, "maclist")
   end
 
 end
+
+local d = f:section(SimpleSection, nil, translate(
+                    "You can set up a list of clients which are not allowed to connect to "
+                 .. "your access point to use one its client networks. Please only use this "
+                 .. "feature to limit usage of your HotSpot if you absolutely understand "
+                 .. "what it does!"
+))
+
+o = d:option(Flag, '_filter_macs', translate("Disallow connection for specific clients"))
+o.default = macfilter == "deny" and o.enabled or o.disabled
+o.rmempty = false
+
+o = d:option(Value, '_filter_list', translate("MAC addresses to disallow connection"))
+o.default = maclist
+o:depends('_filter_macs', "1")
+o.rmempty = false
+o.datatype = "string"
+o.description = translate("list of MAC-addresses separated by space")
 
 --when the save-button is pushed
 function f.handle(self, state, data)
@@ -147,12 +170,26 @@ function f.handle(self, state, data)
       end
       uci:set('wireless', 'client_' .. radio, "disabled", clientdisabled)
 
+      if data['_filter_macs'] == '1' then
+        uci:set('wireless', 'client_' .. radio, "macfilter", "deny")
+        uci:set('wireless', 'client_' .. radio, "maclist", data['_filter_list'])
+      else
+        uci:set('wireless', 'client_' .. radio, "macfilter", "disable")
+      end
+
       if uci:get('wireless', 'adclient_' .. radio) then
         if data[radio .. '_adclient_enabled'] == '0' then
           uci:set('wireless', 'adclient_' .. radio, "disabled", 1)
-        end
+        else
           uci:set('wireless', 'adclient_' .. radio, "disabled", 0)
           uci:set('wireless', 'adclient_' .. radio, "ssid", data[radio .. '_adclient_ssid'])
+        end
+
+        if data['_filter_macs'] == '1' then
+          uci:set('wireless', 'adclient_' .. radio, "macfilter", "deny")
+          uci:set('wireless', 'adclient_' .. radio, "maclist", data['_filter_list'])
+        else
+          uci:set('wireless', 'adclient_' .. radio, "macfilter", "disable")
         end
       end
 

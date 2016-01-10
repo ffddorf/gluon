@@ -39,3 +39,19 @@ msgid ""
 "values include the antenna gain where available, but there are many devices "
 "for which the gain is unavailable or inaccurate."
 msgstr ""
+
+msgid ""
+"You can set up a list of clients which are not allowed to connect to "
+"your access point to use one its client networks. Please only use this "
+"feature to limit usage of your HotSpot if you absolutely understand "
+"what it does!"
+msgstr ""
+
+msgid "Disallow connection for specific clients"
+msgstr ""
+
+msgid "MAC addresses to disallow connection"
+msgstr ""
+
+msgid "list of MAC-addresses separated by space"
+msgstr ""

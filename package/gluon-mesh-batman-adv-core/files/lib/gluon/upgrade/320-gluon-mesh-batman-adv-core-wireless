@@ -15,9 +15,13 @@ local function configure_radio(radio, index, config)
 
   local client = 'client_' .. radio
   local disable_state_client = false
+  local client_macfilter = 'disable'
+  local client_maclist = ''
 
   if uci:get('wireless', client) then
     disable_state_client = uci:get_bool('wireless', client, "disabled")
+    client_macfilter = uci:get('wireless', client, "macfilter") or 'disable'
+    client_maclist = uci:get('wireless', client, "maclist") or ''
   elseif config.client_disabled then
     disable_state_client = true
   end
@@ -25,11 +29,15 @@ local function configure_radio(radio, index, config)
   local adclient = 'adclient_' .. radio
   local adclient_ssid = 'freifunk.net'
   local disable_state_adclient = true
+  local adclient_macfilter = 'disable'
+  local adclient_maclist = ''
 
   if not config.adclient_disabled then
     if uci:get('wireless', adclient) then
       adclient_ssid = uci:get('wireless', adclient, "ssid")
       disable_state_adclient = uci:get_bool('wireless', adclient, "disabled")
+      adclient_macfilter = uci:get('wireless', adclient, "macfilter") or 'disable'
+      adclient_maclist = uci:get('wireless', adclient, "maclist") or ''
     end
   end
 
@@ -81,6 +89,8 @@ local function configure_radio(radio, index, config)
 		macaddr = util.generate_mac(2, index),
 		ifname = client_ifname,
 		disabled = disable_state_client and 1 or 0,
+		macfilter = client_macfilter,
+		maclist = client_maclist,
 	      }
   )
 
@@ -95,6 +105,8 @@ local function configure_radio(radio, index, config)
 		  macaddr = util.generate_mac(3, index),
 		  ifname = adclient_ifname,
 		  disabled = disable_state_adclient and 1 or 0,
+		  macfilter = adclient_macfilter,
+		  maclist = adclient_maclist,
 		}
     )
   end

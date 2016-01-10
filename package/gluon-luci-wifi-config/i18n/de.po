@@ -56,3 +56,23 @@ msgstr ""
 "Wenn möglich, ist in den Werten der Sendeleistung der Antennengewinn "
 "enthalten; diese Werte sind allerdings für viele Geräte nicht verfügbar oder "
 "fehlerhaft."
+
+msgid ""
+"You can set up a list of clients which are not allowed to connect to "
+"your access point to use one its client networks. Please only use this "
+"feature to limit usage of your HotSpot if you absolutely understand "
+"what it does!"
+msgstr ""
+"Du kannst eine Liste von Clients angeben, die sich nicht mit Deinen "
+"Client-Netzwerken verbinden dürfen. Bitte nutze dieses Feature zur "
+"Zugriffsbeschränkung auf Deinen HotSpot nur dann wenn Du verstehst, "
+"was es tut und Du einen guten Grund dafür hast!"
+
+msgid "Disallow connection for specific clients"
+msgstr "Verbindungen für Clients ablehnen"
+
+msgid "MAC addresses to disallow connection"
+msgstr "MAC-Adressen der verbotenen Clients"
+
+msgid "list of MAC-addresses separated by space"
+msgstr "Liste der MAC-Adressen, getrennt durch Leerzeichen"
