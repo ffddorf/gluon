@@ -5,10 +5,10 @@ local sysctl = require 'gluon.sysctl'
 local sysconfig = require 'gluon.sysconfig'
 
 
+uci:delete('network', 'wan', 'ifname')
+uci:delete('network', 'wan', 'type')
 uci:section('network', 'interface', 'wan',
 	    {
-	      ifname = sysconfig.wan_ifname,
-	      type = 'bridge',
 	      igmp_snooping = 0,
 	      peerdns = 0,
 	      auto = 1,
@@ -20,9 +20,9 @@ if not uci:get('network', 'wan', 'proto') then
 end
 
 
+uci:delete('network', 'wan6', 'ifname')
 uci:section('network', 'interface', 'wan6',
 	    {
-	      ifname = 'br-wan',
 	      peerdns = 0,
 	      ip6table = 1,
 	    }

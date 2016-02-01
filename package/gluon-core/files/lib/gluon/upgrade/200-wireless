@@ -1,12 +1,93 @@
 #!/usr/bin/lua
 
 local sysconfig = require 'gluon.sysconfig'
+local site = require 'gluon.site_config'
+local util = require 'gluon.util'
+
+local uci = require('luci.model.uci').cursor()
+
 
 -- Initial
 if not sysconfig.gluon_version then
-  local uci = require('luci.model.uci').cursor()
-
   uci:delete_all('wireless', 'wifi-iface')
-  uci:save('wireless')
-  uci:commit('wireless')
 end
+
+
+local function configure_uplink(radio, index, config)
+  local radio_suffix = radio:match('^radio(%d+)$')
+  local ifname
+  if radio_suffix then
+    ifname = 'uplink' .. radio_suffix
+  end
+
+  local uplink = 'uplink_' .. radio
+  local disabled = true
+  local ssid = ''
+  local key = ''
+  local wds = false
+
+  if uci:get('wireless', uplink) then
+    disabled = uci:get_bool('wireless', uplink, "disabled")
+    ssid = uci:get('wireless', uplink, "ssid")
+    key = uci:get('wireless', uplink, "key")
+    wds = uci:get_bool('wireless', uplink, "wds")
+  end
+
+  uci:delete('wireless', uplink)
+  uci:section('wireless', 'wifi-iface', uplink,
+	      {
+		device = radio,
+		network = 'wan',
+		mode = 'sta',
+		ssid = ssid,
+		macaddr = util.generate_mac(6, index),
+		encryption = 'psk-mixed+tkip+ccmp',
+		key = key,
+		ifname = ifname,
+		wds = wds and 1 or 0,
+		disabled = disabled and 1 or 0,
+	      }
+  )
+
+  if not disabled then
+    if wds then
+      uci:set('network', 'wan', 'type', 'bridge')
+      uci:set('network', 'wan', 'ifname', sysconfig.wan_ifname)
+      uci:set('network', 'wan6', 'ifname', 'br-wan')
+    else
+      uci:set('network', 'wan6', 'ifname', ifname)
+    end
+  end
+end
+
+
+local radios = {}
+
+uci:foreach('wireless', 'wifi-device',
+	    function(s)
+	      table.insert(radios, s['.name'])
+	    end
+)
+
+for index, radio in ipairs(radios) do
+	local hwmode = uci:get('wireless', radio, 'hwmode')
+
+	if hwmode == '11g' or hwmode == '11ng' then
+	  configure_uplink(radio, index, site.wifi24)
+	elseif hwmode == '11a' or hwmode == '11na' then
+	  configure_uplink(radio, index, site.wifi5)
+	end
+end
+
+
+if not uci:get('network', 'wan6', 'ifname') then
+  uci:set('network', 'wan', 'type', 'bridge')
+  uci:set('network', 'wan', 'ifname', sysconfig.wan_ifname)
+  uci:set('network', 'wan6', 'ifname', 'br-wan')
+end
+
+
+uci:save('wireless')
+uci:save('network')
+uci:commit('wireless')
+uci:commit('network')

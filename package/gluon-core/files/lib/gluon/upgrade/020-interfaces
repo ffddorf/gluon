@@ -34,6 +34,8 @@ if not (sysconfig.lan_ifname or sysconfig.wan_ifname) then
   uci:save('network')
   uci:commit('network')
 end
+
+
 if not sysconfig.reverse_wan_lan then
   sysconfig.reverse_wan_lan = '0'
 end

@@ -88,6 +88,7 @@ for _, radio in ipairs(radios) do
       o.default = uci:get_bool('wireless', 'adclient_' .. radio, "disabled") and o.disabled or o.enabled
       o.rmempty = false
 
+      --SSID of the client network
       o = p:option(Value, radio .. '_adclient_ssid', translate("SSID of additional client network"))
       o.default = uci:get('wireless', 'adclient_' .. radio, 'ssid')
       o:depends(radio .. '_adclient_enabled', "1")

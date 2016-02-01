@@ -10,8 +10,20 @@ msgstr ""
 "Content-Transfer-Encoding: 8bit\n"
 "Plural-Forms: nplurals=2; plural=(n != 1);\n"
 
-msgid "Reverse WAN/LAN interfaces"
-msgstr "LAN/WAN-Schnittstellen tauschen"
+msgid "Uplink interface"
+msgstr "Uplink-Netzwerk"
+
+msgid "SSID of uplink network"
+msgstr "SSID des Uplink-Netzwerks"
+
+msgid "PSK for uplink network"
+msgstr "PSK für das Uplink-Netzwerk"
+
+msgid "Bridge wireless uplink to WAN port (WDS)"
+msgstr "Drahtlosen Uplink mit WAN-Port brücken (WDS)"
+
+msgid "Reverse wired WAN/LAN interfaces"
+msgstr "LAN/WAN-Kabelschnittstellen tauschen"
 
 msgid "Automatic (DHCP)"
 msgstr "Automatisch (DHCP)"

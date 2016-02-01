@@ -1,7 +1,19 @@
 msgid ""
 msgstr "Content-Type: text/plain; charset=UTF-8"
 
-msgid "Reverse WAN/LAN interfaces"
+msgid "Uplink interface"
+msgstr ""
+
+msgid "SSID of uplink network"
+msgstr ""
+
+msgid "PSK for uplink network"
+msgstr ""
+
+msgid "Bridge wireless uplink to WAN port (WDS)"
+msgstr ""
+
+msgid "Reverse wired WAN/LAN interfaces"
 msgstr ""
 
 msgid "Automatic (DHCP)"
