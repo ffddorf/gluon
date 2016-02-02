@@ -47,7 +47,7 @@ s = f:section(SimpleSection, nil, nil)
 o = s:option(ListValue, "uplink", translate("Uplink interface"))
 o:value("wired", translate("Wired WAN"))
 for _, radio in ipairs(radios) do
-  o:value(radio, translatef("Wireless on channel %s", uci:get('wireless', radio, "channel")))
+  o:value(radio, translatef("Wireless WAN on channel %s", uci:get('wireless', radio, "channel")))
   if not uci:get_bool('wireless', 'uplink_' .. radio, "disabled") then
     uplink = radio
   end

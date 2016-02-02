@@ -4,6 +4,12 @@ msgstr "Content-Type: text/plain; charset=UTF-8"
 msgid "Uplink interface"
 msgstr ""
 
+msgid "Wired WAN"
+msgstr ""
+
+msgid "Wireless WAN on channel %s"
+msgstr ""
+
 msgid "SSID of uplink network"
 msgstr ""
 

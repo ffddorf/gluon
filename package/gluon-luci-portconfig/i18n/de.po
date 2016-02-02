@@ -13,6 +13,12 @@ msgstr ""
 msgid "Uplink interface"
 msgstr "Uplink-Netzwerk"
 
+msgid "Wired WAN"
+msgstr "WAN über Ethernet-Kabel"
+
+msgid "Wireless WAN on channel %s"
+msgstr "WAN über WLAN auf Kanal %s"
+
 msgid "SSID of uplink network"
 msgstr "SSID des Uplink-Netzwerks"
 
