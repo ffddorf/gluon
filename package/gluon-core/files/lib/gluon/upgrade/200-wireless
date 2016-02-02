@@ -40,7 +40,6 @@ local function configure_uplink(radio, index, config)
 		network = 'wan',
 		mode = 'sta',
 		ssid = ssid,
-		macaddr = util.generate_mac(6, index),
 		encryption = 'psk-mixed+tkip+ccmp',
 		key = key,
 		ifname = ifname,

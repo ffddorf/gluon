@@ -189,7 +189,6 @@ local function configure_radio(radio, index, config)
 			network = stamesh,
 			mode = 'sta',
 			ssid = config.stamesh_ssid,
-			macaddr = util.generate_mac(5, index),
 			mcast_rate = config.mesh_mcast_rate,
 			ifname = stamesh_ifname,
 			disabled = disable_state_stamesh and 1 or 0,
