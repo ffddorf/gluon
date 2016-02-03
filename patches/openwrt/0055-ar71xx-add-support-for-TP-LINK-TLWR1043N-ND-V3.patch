@@ -1,0 +1,158 @@
+From: Heiko Wundram <heiko.wundram@freifunk-celle.de>
+Date: Mon, Feb 3 10:30:00 CET 2016 +0100
+Subject: Import support for the WR1043ND v3.
+
+This patchset adds support for the TP-LINK TL-WR1043ND v3 to the OpenWRT build. The
+changes are minimal, as the platform is equivalent to the v2, but only the bootloader
+needs a new signature.
+
+diff --git a/target/linux/ar71xx/base-files/etc/diag.sh b/target/linux/ar71xx/base-files/etc/diag.sh
+index 9b172a5..14c4945 100755
+--- a/target/linux/ar71xx/base-files/etc/diag.sh
++++ b/target/linux/ar71xx/base-files/etc/diag.sh
+@@ -207,6 +207,7 @@ get_status_led() {
+ 	tl-wr1041n-v2 | \
+ 	tl-wr1043nd | \
+ 	tl-wr1043nd-v2 | \
++	tl-wr1043nd-v3 | \
+ 	tl-wr741nd | \
+ 	tl-wr741nd-v4 | \
+ 	tl-wr841n-v1 | \
+diff --git a/target/linux/ar71xx/base-files/etc/uci-defaults/01_leds b/target/linux/ar71xx/base-files/etc/uci-defaults/01_leds
+index fa03d46..6bb8aaa 100755
+--- a/target/linux/ar71xx/base-files/etc/uci-defaults/01_leds
++++ b/target/linux/ar71xx/base-files/etc/uci-defaults/01_leds
+@@ -399,7 +399,8 @@ tl-wr1041n-v2)
+ 	;;
+ 
+ tl-wr1043nd | \
+-tl-wr1043nd-v2)
++tl-wr1043nd-v2 | \
++tl-wr1043nd-v3)
+ 	ucidef_set_led_usbdev "usb" "USB" "tp-link:green:usb" "1-1"
+ 	ucidef_set_led_wlan "wlan" "WLAN" "tp-link:green:wlan" "phy0tpt"
+ 	;;
+diff --git a/target/linux/ar71xx/base-files/etc/uci-defaults/02_network b/target/linux/ar71xx/base-files/etc/uci-defaults/02_network
+index 32976b8..88cfa59 100755
+--- a/target/linux/ar71xx/base-files/etc/uci-defaults/02_network
++++ b/target/linux/ar71xx/base-files/etc/uci-defaults/02_network
+@@ -46,7 +46,8 @@ ap136-010)
+ 
+ ap136-020 |\
+ ap135-020 |\
+-tl-wr1043nd-v2)
++tl-wr1043nd-v2 |\
++tl-wr1043nd-v3)
+ 	ucidef_set_interfaces_lan_wan "eth1" "eth0"
+ 	ucidef_add_switch "switch0" "1" "1"
+ 	ucidef_add_switch_vlan "switch0" "1" "0 1 2 3 4"
+diff --git a/target/linux/ar71xx/base-files/lib/ar71xx.sh b/target/linux/ar71xx/base-files/lib/ar71xx.sh
+index 56f8279..feb4cca 100755
+--- a/target/linux/ar71xx/base-files/lib/ar71xx.sh
++++ b/target/linux/ar71xx/base-files/lib/ar71xx.sh
+@@ -620,6 +620,9 @@ ar71xx_board_detect() {
+ 	*"TL-WR1043ND v2")
+ 		name="tl-wr1043nd-v2"
+ 		;;
++	*"TL-WR1043ND v3")
++		name="tl-wr1043nd-v3"
++		;;
+ 	*TL-WR2543N*)
+ 		name="tl-wr2543n"
+ 		;;
+diff --git a/target/linux/ar71xx/base-files/lib/preinit/05_set_preinit_iface_ar71xx b/target/linux/ar71xx/base-files/lib/preinit/05_set_preinit_iface_ar71xx
+index a9a8794..e37cf60 100644
+--- a/target/linux/ar71xx/base-files/lib/preinit/05_set_preinit_iface_ar71xx
++++ b/target/linux/ar71xx/base-files/lib/preinit/05_set_preinit_iface_ar71xx
+@@ -31,6 +31,7 @@ set_preinit_iface() {
+ 	tl-mr3420-v2 |\
+ 	tl-wdr4900-v2 |\
+ 	tl-wr1043nd-v2 |\
++	tl-wr1043nd-v3 |\
+ 	tl-wr710n |\
+ 	tl-wr720n-v3 |\
+ 	tl-wr841n-v8 |\
+diff --git a/target/linux/ar71xx/base-files/lib/upgrade/platform.sh b/target/linux/ar71xx/base-files/lib/upgrade/platform.sh
+index 4169770..79f6b52 100755
+--- a/target/linux/ar71xx/base-files/lib/upgrade/platform.sh
++++ b/target/linux/ar71xx/base-files/lib/upgrade/platform.sh
+@@ -331,6 +331,7 @@ platform_check_image() {
+ 	tl-wr1041n-v2 | \
+ 	tl-wr1043nd | \
+ 	tl-wr1043nd-v2 | \
++	tl-wr1043nd-v3 | \
+ 	tl-wr2543n)
+ 		[ "$magic" != "0100" ] && {
+ 			echo "Invalid image type."
+diff --git a/target/linux/ar71xx/files/arch/mips/ath79/mach-tl-wr1043nd-v2.c b/target/linux/ar71xx/files/arch/mips/ath79/mach-tl-wr1043nd-v2.c
+index 3e79ee1..d4be9d6 100644
+--- a/target/linux/ar71xx/files/arch/mips/ath79/mach-tl-wr1043nd-v2.c
++++ b/target/linux/ar71xx/files/arch/mips/ath79/mach-tl-wr1043nd-v2.c
+@@ -213,3 +213,6 @@ static void __init tl_wr1043nd_v2_setup(void)
+ MIPS_MACHINE(ATH79_MACH_TL_WR1043ND_V2, "TL-WR1043ND-v2",
+ 	     "TP-LINK TL-WR1043ND v2", tl_wr1043nd_v2_setup);
+ 
++MIPS_MACHINE(ATH79_MACH_TL_WR1043ND_V3, "TL-WR1043ND-v3",
++	     "TP-LINK TL-WR1043ND v3", tl_wr1043nd_v2_setup);
++
+diff --git a/target/linux/ar71xx/files/arch/mips/ath79/mach-tl-wr841n-v9.c b/target/linux/ar71xx/files/arch/mips/ath79/mach-tl-wr841n-v9.c
+index 3b76f74..9b85dce 100644
+--- a/target/linux/ar71xx/files/arch/mips/ath79/mach-tl-wr841n-v9.c
++++ b/target/linux/ar71xx/files/arch/mips/ath79/mach-tl-wr841n-v9.c
+@@ -137,17 +137,5 @@ static void __init tl_wr841n_v9_setup(void)
+ MIPS_MACHINE(ATH79_MACH_TL_WR841N_V9, "TL-WR841N-v9", "TP-LINK TL-WR841N/ND v9",
+ 	     tl_wr841n_v9_setup);
+ 
+-static void __init tl_wr841n_v10_setup(void)
+-{
+-	tl_ap143_setup();
+-
+-	ath79_register_leds_gpio(-1, ARRAY_SIZE(tl_wr841n_v9_leds_gpio),
+-				 tl_wr841n_v9_leds_gpio);
+-
+-	ath79_register_gpio_keys_polled(1, TL_WR841NV9_KEYS_POLL_INTERVAL,
+-					ARRAY_SIZE(tl_wr841n_v9_gpio_keys),
+-					tl_wr841n_v9_gpio_keys);
+-}
+-
+ MIPS_MACHINE(ATH79_MACH_TL_WR841N_V10, "TL-WR841N-v10", "TP-LINK TL-WR841N/ND v10",
+-	     tl_wr841n_v10_setup);
++	     tl_wr841n_v9_setup);
+diff --git a/target/linux/ar71xx/image/Makefile b/target/linux/ar71xx/image/Makefile
+index 5611617..5c1e126 100644
+--- a/target/linux/ar71xx/image/Makefile
++++ b/target/linux/ar71xx/image/Makefile
+@@ -1250,6 +1250,7 @@ $(eval $(call SingleProfile,TPLINK-LZMA,64kraw,TLWR941NV5,tl-wr941nd-v5,TL-WR941
+ $(eval $(call SingleProfile,TPLINK-LZMA,64kraw,TLWR941NV6,tl-wr941nd-v6,TL-WDR3500,ttyS0,115200,0x09410006,1,4Mlzma))
+ $(eval $(call SingleProfile,TPLINK-LZMA,64kraw,TLWR1041,tl-wr1041n-v2,TL-WR1041N-v2,ttyS0,115200,0x10410002,1,4Mlzma))
+ $(eval $(call SingleProfile,TPLINK-LZMA,64kraw,TLWR1043V2,tl-wr1043nd-v2,TL-WR1043ND-v2,ttyS0,115200,0x10430002,1,8M))
++$(eval $(call SingleProfile,TPLINK-LZMA,64kraw,TLWR1043V3,tl-wr1043nd-v3,TL-WR1043ND-v3,ttyS0,115200,0x10430003,1,8M))
+ $(eval $(call SingleProfile,TPLINK-LZMA,64kraw,TLWR2543,tl-wr2543-v1,TL-WR2543N,ttyS0,115200,0x25430001,1,8Mlzma,-v 3.13.99))
+ $(eval $(call SingleProfile,TPLINK-LZMA,64kraw,TLWDR3500V1,tl-wdr3500-v1,TL-WDR3500,ttyS0,115200,0x35000001,1,8Mlzma))
+ $(eval $(call SingleProfile,TPLINK-LZMA,64kraw,TLWDR3600V1,tl-wdr3600-v1,TL-WDR4300,ttyS0,115200,0x36000001,1,8Mlzma))
+@@ -1327,7 +1328,7 @@ $(eval $(call MultiProfile,TLWR743,TLWR743NV1 TLWR743NV2))
+ $(eval $(call MultiProfile,TLWR841,TLWR841NV15 TLWR841NV3 TLWR841NV5 TLWR841NV7 TLWR841NV8 TLWR841NV9 TLWR841NV10))
+ $(eval $(call MultiProfile,TLWR842,TLWR842V1 TLWR842V2))
+ $(eval $(call MultiProfile,TLWR941,TLWR941NV2 TLWR941NV3 TLWR941NV4 TLWR941NV5 TLWR941NV6))
+-$(eval $(call MultiProfile,TLWR1043,TLWR1043V1 TLWR1043V2))
++$(eval $(call MultiProfile,TLWR1043,TLWR1043V1 TLWR1043V2 TLWR1043V3))
+ $(eval $(call MultiProfile,TLWDR4300,TLWDR3500V1 TLWDR3600V1 TLWDR4300V1 TLWDR4300V1IL TLWDR4310V1 MW4530RV1))
+ $(eval $(call MultiProfile,TUBE2H,TUBE2H8M TUBE2H16M))
+ $(eval $(call MultiProfile,UBNT,UBNTAIRROUTER UBNTRS UBNTRSPRO UBNTLSSR71 UBNTBULLETM UBNTROCKETM UBNTNANOM UBNTNANOMXW UBNTLOCOXW UBNTUNIFI UBNTUNIFIOUTDOOR UBNTUNIFIOUTDOORPLUS UAPPRO UBNTAIRGW))
+diff --git a/target/linux/ar71xx/patches-3.10/731-MIPS-ath79-add-WR1043v3.patch b/target/linux/ar71xx/patches-3.10/731-MIPS-ath79-add-WR1043v3.patch
+new file mode 100644
+index 0000000..7ee7c88
+--- /dev/null
++++ b/target/linux/ar71xx/patches-3.10/731-MIPS-ath79-add-WR1043v3.patch
+@@ -0,0 +1,11 @@
++diff -urN a/arch/mips/ath79/machtypes.h b/arch/mips/ath79/machtypes.h
++--- a/arch/mips/ath79/machtypes.h	2016-02-03 09:56:47.991190373 +0100
+++++ b/arch/mips/ath79/machtypes.h	2016-02-03 09:59:48.225030420 +0100
++@@ -135,6 +135,7 @@
++ 	ATH79_MACH_TL_WR1041N_V2,	/* TP-LINK TL-WR1041N v2 */
++ 	ATH79_MACH_TL_WR1043ND,		/* TP-LINK TL-WR1043ND */
++ 	ATH79_MACH_TL_WR1043ND_V2,	/* TP-LINK TL-WR1043ND v2 */
+++	ATH79_MACH_TL_WR1043ND_V3,	/* TP-LINK TL-WR1043ND v3 */
++ 	ATH79_MACH_TL_WR2543N,		/* TP-LINK TL-WR2543N/ND */
++ 	ATH79_MACH_TL_WR703N,		/* TP-LINK TL-WR703N */
++ 	ATH79_MACH_TL_WR710N,		/* TP-LINK TL-WR710N */

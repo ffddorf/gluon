@@ -112,7 +112,7 @@ ar71xx-generic
   - TL-WDR3500 (v1)
   - TL-WDR3600 (v1)
   - TL-WDR4300 (v1)
-  - TL-WR1043N/ND (v1, v2)
+  - TL-WR1043N/ND (v1, v2, v3)
   - TL-WR703N (v1)
   - TL-WR710N (v1)
   - TL-WR740N (v1, v3, v4, v5)
