@@ -52,7 +52,7 @@ index 30d12e9..de3de90 100644
 +				append network_data "disable_vht=1" "$N$T"
 +			;;
 +		esac
-+	}}
++	}
  
  	cat >> "$_config" <<EOF
  network={
