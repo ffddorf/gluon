@@ -1,0 +1,75 @@
+From: Heiko Wundram <heiko.wundram@freifunk-celle.de>
+Date: Fri, Feb 5 13:30:00 CET 2016 +0100
+Subject: Backport fix for bt_coex from OpenWRT.
+
+Index: a/package/network/services/hostapd/files/netifd.sh
+===================================================================
+--- a/package/network/services/hostapd/files/netifd.sh	(revision 45872)
++++ b/package/network/services/hostapd/files/netifd.sh	(revision 45873)
+@@ -53,5 +53,5 @@
+ 
+ 	config_add_string country
+-	config_add_boolean country_ie doth
++	config_add_boolean country_ie doth ht_coex
+ 	config_add_string require_mode
+ 
+@@ -66,5 +66,5 @@
+ 	local base_cfg=
+ 
+-	json_get_vars country country_ie beacon_int doth require_mode
++	json_get_vars country country_ie beacon_int doth require_mode ht_coex
+ 
+ 	hostapd_set_log_options base_cfg
+@@ -72,5 +72,7 @@
+ 	set_default country_ie 1
+ 	set_default doth 1
+-
++	set_default ht_coex 0
++
++	append base_cfg "ht_coex=$ht_coex" "$N"
+ 	[ -n "$country" ] && {
+ 		append base_cfg "country_code=$country" "$N"
+Index: a/package/network/services/hostapd/patches/300-noscan.patch
+===================================================================
+--- a/package/network/services/hostapd/patches/300-noscan.patch	(revision 45872)
++++ b/package/network/services/hostapd/patches/300-noscan.patch	(revision 45873)
+@@ -1,5 +1,5 @@
+ --- a/hostapd/config_file.c
+ +++ b/hostapd/config_file.c
+-@@ -2639,6 +2639,8 @@ static int hostapd_config_fill(struct ho
++@@ -2639,6 +2639,10 @@ static int hostapd_config_fill(struct ho
+  		}
+  #endif /* CONFIG_IEEE80211W */
+@@ -7,4 +7,6 @@
+ +	} else if (os_strcmp(buf, "noscan") == 0) {
+ +		conf->noscan = atoi(pos);
+++	} else if (os_strcmp(buf, "ht_coex") == 0) {
+++		conf->no_ht_coex = !atoi(pos);
+  	} else if (os_strcmp(buf, "ieee80211n") == 0) {
+  		conf->ieee80211n = atoi(pos);
+@@ -12,9 +14,10 @@
+ --- a/src/ap/ap_config.h
+ +++ b/src/ap/ap_config.h
+-@@ -576,6 +576,7 @@ struct hostapd_config {
++@@ -576,6 +576,8 @@ struct hostapd_config {
+  
+  	int ht_op_mode_fixed;
+  	u16 ht_capab;
+ +	int noscan;
+++	int no_ht_coex;
+  	int ieee80211n;
+  	int secondary_channel;
+@@ -37,5 +40,5 @@
+  		return;
+  
+-+	if (iface->conf->noscan)
+++	if (iface->conf->noscan || iface->conf->no_ht_coex)
+ +		return;
+ +
+@@ -47,5 +50,5 @@
+  		return;
+  
+-+	if (iface->conf->noscan)
+++	if (iface->conf->noscan || iface->conf->no_ht_coex)
+ +		return;
+ +
