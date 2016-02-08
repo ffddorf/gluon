@@ -1,0 +1,14 @@
+#!/bin/bash
+
+make manifest GLUON_BRANCH=experimental
+./contrib/sign.sh ~/secret output/images/sysupgrade/experimental.manifest 
+#./contrib/sign.sh ~/secret output/images/factory/experimental.manifest 
+
+d=`date`
+echo $d
+mkdir "/var/www/gluon/gluon/experimental.$d"
+cp -r output/images/. "/var/www/gluon/gluon/experimental.${d}/"
+rm -rf /var/www/gluon/gluon/experimental
+ln -s "/var/www/gluon/gluon/experimental.${d}" /var/www/gluon/gluon/experimental
+
+cp -r output/modules /var/www/gluon/gluon
