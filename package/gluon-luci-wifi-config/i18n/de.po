@@ -28,8 +28,8 @@ msgstr "Zusätzliches Client-Netz aktivieren"
 msgid "SSID of additional client network"
 msgstr "SSID des zusätzlichen Client-Netzes"
 
-msgid "e.g. freifunk.net"
-msgstr "z.B. freifunk.net"
+msgid "e.g. freifunk.net, empty is disabled"
+msgstr "z.B. freifunk.net, leer zum Deaktivieren"
 
 msgid "Enable mesh network"
 msgstr "Mesh-Netz aktivieren"
@@ -76,3 +76,27 @@ msgstr "MAC-Adressen der verbotenen Clients"
 
 msgid "list of MAC-addresses separated by space"
 msgstr "Liste der MAC-Adressen, getrennt durch Leerzeichen"
+
+msgid ""
+"You can set up timed enabling/disabling of your client wireless "
+"networks here. Please use cron-like expressions on individual lines, "
+"terminated by either on or off. The expressions are evalutated from "
+"from top to bottom for first match, with the default being off "
+"if no rule matched."
+msgstr ""
+"Du kannst hier einstellen, dass die Client-Netze (freifunk-celle.de und "
+"z.B. freifunk.net) zeitgesteuert aktiviert und deaktiviert werden. Das "
+"private WLAN und auch das Mesh-Netz sind davon unberührt. Bitte "
+"nutze cron-artige Ausdrücke, die von oben nach unten ausgewertet "
+"werden. Der erste passende Ausdruck entscheidet, ob die Client-Netze "
+"an- oder ausgeschaltet sind zu der betreffenden Zeit, mit Standard-"
+"Einstellung aus, falls keine eingestellte Regel zutrifft."
+
+msgid "Enable timed client networks"
+msgstr "Zeitgesteuerte Client-Netze aktivieren"
+
+msgid "Timed client network cron expressions"
+msgstr "Cron-Ausdrücke zum Steuern der Zeitschaltung für Client-Netze"
+
+msgid "format: minute(s) hour(s) day(s) month(s) dow(s) on/off"
+msgstr "Format: Minute(n) Stunde(n) Tag(e) Monat(e) Wochentag(e) on/off"

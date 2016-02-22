@@ -19,7 +19,7 @@ local function configure_radio(radio, index, config)
   local client_maclist = ''
 
   if uci:get('wireless', client) then
-    disable_state_client = uci:get_bool('wireless', client, "disabled")
+    disable_state_client = uci:get_bool('gluon-timed-wifi', 'default', "enabled") or uci:get_bool('wireless', client, "disabled")
     client_macfilter = uci:get('wireless', client, "macfilter") or 'disable'
     client_maclist = uci:get('wireless', client, "maclist") or ''
   elseif config.client_disabled then
@@ -27,15 +27,15 @@ local function configure_radio(radio, index, config)
   end
 
   local adclient = 'adclient_' .. radio
-  local adclient_ssid = 'freifunk.net'
   local disable_state_adclient = true
+  local adclient_ssid = ''
   local adclient_macfilter = 'disable'
   local adclient_maclist = ''
 
   if not config.adclient_disabled then
     if uci:get('wireless', adclient) then
-      adclient_ssid = uci:get('wireless', adclient, "ssid")
-      disable_state_adclient = uci:get_bool('wireless', adclient, "disabled")
+      disable_state_adclient = uci:get_bool('gluon-timed-wifi', 'default', "enabled") or uci:get_bool('wireless', adclient, "disabled")
+      adclient_ssid = disable_state_adclient and '' or uci:get('wireless', adclient, "ssid")
       adclient_macfilter = uci:get('wireless', adclient, "macfilter") or 'disable'
       adclient_maclist = uci:get('wireless', adclient, "maclist") or ''
     end

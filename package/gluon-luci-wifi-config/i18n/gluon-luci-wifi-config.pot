@@ -19,7 +19,7 @@ msgstr ""
 msgid "SSID of additional client network"
 msgstr ""
 
-msgid "e.g. freifunk.net"
+msgid "e.g. freifunk.net, empty is disabled"
 msgstr ""
 
 msgid "Enable mesh network"
@@ -54,4 +54,21 @@ msgid "MAC addresses to disallow connection"
 msgstr ""
 
 msgid "list of MAC-addresses separated by space"
+msgstr ""
+
+msgid ""
+"You can set up timed enabling/disabling of your client wireless "
+"networks here. Please use cron-like expressions on individual lines, "
+"terminated by either on or off. The expressions are evalutated from "
+"from top to bottom for first match, with the default being off "
+"if no rule matched."
+msgstr ""
+
+msgid "Enable timed client networks"
+msgstr ""
+
+msgid "Timed client network cron expressions"
+msgstr ""
+
+msgid "format: minute(s) hour(s) day(s) month(s) dow(s) on/off"
 msgstr ""

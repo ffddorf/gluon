@@ -1,0 +1,5 @@
+# Default interface configuration.
+
+config interface 'default'
+	option enabled '0'
+	list cron '* * * * * on'

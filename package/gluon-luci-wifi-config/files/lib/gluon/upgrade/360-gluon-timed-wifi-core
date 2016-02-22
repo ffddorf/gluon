@@ -1,0 +1,16 @@
+#!/usr/bin/lua
+
+local uci = require('luci.model.uci').cursor()
+
+local timed_wifi_enabled = uci:get_bool('gluon-timed-wifi', 'default', 'enabled')
+local timed_wifi_cron = uci:get_list('gluon-timed-wifi', 'default', 'cron')
+
+uci:delete('gluon-timed-wifi', 'default')
+uci:section('gluon-timed-wifi', 'interface', 'default', {
+  enabled = timed_wifi_enabled and '1' or '0',
+})
+
+uci:set_list('gluon-timed-wifi', 'default', 'cron', timed_wifi_cron)
+
+uci:save('gluon-timed-wifi')
+uci:commit('gluon-timed-wifi')
