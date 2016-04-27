@@ -129,12 +129,10 @@ $(eval $(call GluonModel,TLMR3420,tl-mr3420-v2,tp-link-tl-mr3420-v2))
 $(eval $(call GluonProfile,TLWR2543))
 $(eval $(call GluonModel,TLWR2543,tl-wr2543-v1,tp-link-tl-wr2543n-nd-v1))
 
-ifeq ($(BROKEN),1)
 # Archer C5 v1, C7 v2
 $(eval $(call GluonProfile,ARCHERC7,kmod-ath10k))
-$(eval $(call GluonModel,ARCHERC7,archer-c5,tp-link-archer-c5-v1)) # BROKEN: ath10k
-$(eval $(call GluonModel,ARCHERC7,archer-c7-v2,tp-link-archer-c7-v2)) # BROKEN: ath10k
-endif
+$(eval $(call GluonModel,ARCHERC7,archer-c5,tp-link-archer-c5-v1)) # IBSS on 5 GHz broken: ath10k
+$(eval $(call GluonModel,ARCHERC7,archer-c7-v2,tp-link-archer-c7-v2)) # IBSS on 5 GHz broken: ath10k
 
 ## Ubiquiti (everything)
 $(eval $(call GluonProfile,UBNT))

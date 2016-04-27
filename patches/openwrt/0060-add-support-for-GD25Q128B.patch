@@ -1,0 +1,29 @@
+From: Heiko Wundram <heiko.wundram@freifunk-celle.de>
+Date: Fri, Apr 27 14:00:00 CSET 2016 +0200
+Subject: Import patch for supporting Archer C7 new flash chip.
+
+This patchset adds support for the new flash chip GD25Q128B used
+on the latest edition of the Archer C7 v2.0.
+
+--- /dev/null
++++ b/target/linux/generic/patches-3.10/010-support_GD25Q128B.patch
+@@ -0,0 +1,19 @@
++From d943f2ef97b8177d945ec654ff4ad31901c9771c Mon Sep 17 00:00:00 2001
++From: John Marrett <johnf@zioncluster.ca>
++Date: Tue, 19 Apr 2016 20:34:19 -0400
++Subject: [PATCH] Backport GD25Q128B support from trunk and 3.19
++
++Backport patches for new flash chip support from 3.19 for the
++current OpenWRT image. Patch adapted for Barrier Breaker by
++Heiko Wundram <heiko.wundram@freifunk-celle.de>.
++
++--- a/drivers/mtd/devices/m25p80.c	2016-04-19 20:30:41.535015813 -0400
+++++ b/drivers/mtd/devices/m25p80.c	2016-04-19 20:32:12.767454183 -0400
++@@ -510,6 +510,7 @@
++ 	/* GigaDevice */
++ 	{ "gd25q32", INFO(0xc84016, 0, 64 * 1024,  64, SECT_4K) },
++ 	{ "gd25q64", INFO(0xc84017, 0, 64 * 1024, 128, SECT_4K) },
+++	{ "gd25q128", INFO(0xc84018, 0, 64 * 1024, 256, SECT_4K) },
++ 
++ 	/* Intel/Numonyx -- xxxs33b */
++ 	{ "160s33b",  INFO(0x898911, 0, 64 * 1024,  32, 0) },
