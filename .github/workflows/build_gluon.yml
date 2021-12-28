@@ -1,0 +1,31 @@
+name: Build Gluon
+on:
+  push:
+    branches:
+      - master*
+      - next
+      - v20*
+  pull_request:
+    types: [opened, synchronize, reopened]
+
+
+jobs:
+  build:
+    name: Build Gluon
+    runs-on: ubuntu-latest
+    env:
+      GLUONBRANCHES: "stable beta experimental"
+      GLUONGITTAG: "v2020.1.3"
+      FIRMWARERELEASE: "v1.9.3"
+      GLUONTARGETS: "ar71xx-nand ar71xx-tiny ath79-generic brcm2708-bcm2708 brcm2708-bcm2709 ipq40xx-generic ipq806x-generic lantiq-xrx200 lantiq-xway mpc85xx-generic mpc85xx-p1020 ramips-mt7620 ramips-mt7621 ramips-mt76x8 ramips-rt305x sunxi-cortexa7 x86-generic x86-geode x86-64"
+      VERBOSE: "true"
+      #JOBS: "1"
+    steps:
+      - name: Run Buildscript
+        run: ./scripts/buildscript-ci.sh || cat gluon_build/output/logs/*.log
+    
+      - name: Upload Images
+        uses: actions/upload-artifact@v2
+        with:
+          path: dist/
+          if-no-files-found: error
